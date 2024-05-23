@@ -39,5 +39,38 @@ namespace AuthenticationAndAuthorization.DbContext
             }
             return false;
         }
+
+        public List<Login> LoginUser()
+        {
+
+            List<Login> login = new List<Login>();
+            try
+            {
+                DataTable dt = new DataTable();
+                SqlConnection con = new SqlConnection(ConnectionString);
+                //SqlCommand cmd = new SqlCommand("spLoginUser", con);
+                SqlDataAdapter da = new SqlDataAdapter("spLoginUser", con);
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                da.Fill(dt);
+
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    Login loginUser = new Login()
+                    {
+                        UserId = Convert.ToInt32(dt.Rows[i][0]),
+                        UserName = Convert.ToString(dt.Rows[i][1]),
+                        Email = Convert.ToString(dt.Rows[i][2]),
+                        Password = Convert.ToString(dt.Rows[i][3]),
+                    };
+
+                    login.Add(loginUser);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return login;
+        }
     }
 }

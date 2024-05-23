@@ -35,13 +35,9 @@ namespace AuthenticationAndAuthorization.Controllers
                     if (result)
                     {
                         ModelState.Clear();
-                        TempData["Message"] = "User Registered Successfully";
-                        return RedirectToAction("Index");
+                        return RedirectToAction("Login");
                     }
-                    else
-                    {
-                        ViewBag["Message"] = "User not Registered";
-                    }
+
                 }
             }
             catch (Exception ex)
@@ -51,6 +47,39 @@ namespace AuthenticationAndAuthorization.Controllers
 
             return View();
 
+        }
+
+        [HttpGet]
+        public ActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Login(Login login)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    Login User = connectionContext.LoginUser().Where(x => x.Email == login.Email && x.Password == login.Password).FirstOrDefault();
+                    if (User != null)
+                    {
+                        ModelState.Clear();
+                        TempData["Message"] = "User LoggedIN Successfully";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["Message"] = "Invalid Userid or Password";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return View();
         }
     }
 }
