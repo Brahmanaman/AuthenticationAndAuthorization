@@ -9,3 +9,14 @@
 {
     <h3 class="text-success">@TempData["Message"]</h3>
 }
+
+@if (Request.Cookies["UserName"] != null)
+{
+    <h1>@Request.Cookies["UserName"].Value.ToString()</h1>
+
+}
+
+@if (Request.Cookies["UserEmail"] != null)
+{
+    <h1>@Request.Cookies["UserEmail"].Value.ToString()</h1>
+}

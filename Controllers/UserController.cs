@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using AuthenticationAndAuthorization.Models;
 using AuthenticationAndAuthorization.DbContext;
+using System.Web.Security;
 
 namespace AuthenticationAndAuthorization.Controllers
 {
@@ -65,6 +66,21 @@ namespace AuthenticationAndAuthorization.Controllers
                     Login User = connectionContext.LoginUser().Where(x => x.Email == login.Email && x.Password == login.Password).FirstOrDefault();
                     if (User != null)
                     {
+                        HttpCookie cookieUserId = new HttpCookie("UserId", User.UserId.ToString());
+                        Response.Cookies.Add(cookieUserId);
+
+
+                        HttpCookie cookieUserName = new HttpCookie("UserName", User.UserName.ToString());
+                        Response.Cookies.Add(cookieUserName);
+
+
+                        HttpCookie cookieUserEmail = new HttpCookie("UserEmail", User.Email.ToString());
+                        Response.Cookies.Add(cookieUserEmail);
+
+                        cookieUserName.Expires = DateTime.Now.AddSeconds(10);
+
+
+
                         ModelState.Clear();
                         TempData["Message"] = "User LoggedIN Successfully";
                         return RedirectToAction("Index");
@@ -80,6 +96,12 @@ namespace AuthenticationAndAuthorization.Controllers
                 Console.WriteLine(ex.Message);
             }
             return View();
+        }
+
+        public ActionResult Logout()
+        {
+            FormsAuthentication.SignOut();
+            return RedirectToAction("Login");
         }
     }
 }
