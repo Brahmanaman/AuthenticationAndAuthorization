@@ -9,22 +9,26 @@ using System.Web.Security;
 
 namespace AuthenticationAndAuthorization.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
         ConnectionContext connectionContext = new ConnectionContext();
 
+        [AllowAnonymous]
         // GET: User
         public ActionResult Index()
         {
             return View();
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public ActionResult Signup()
         {
             return View();
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public ActionResult Signup(SignUp user)
         {
@@ -50,12 +54,14 @@ namespace AuthenticationAndAuthorization.Controllers
 
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public ActionResult Login()
         {
             return View();
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public ActionResult Login(Login login)
         {
@@ -102,6 +108,7 @@ namespace AuthenticationAndAuthorization.Controllers
             return View();
         }
 
+        [AllowAnonymous]
         public ActionResult Logout()
         {
             Session.Abandon();
