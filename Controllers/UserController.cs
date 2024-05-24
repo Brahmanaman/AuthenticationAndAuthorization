@@ -77,7 +77,11 @@ namespace AuthenticationAndAuthorization.Controllers
                         HttpCookie cookieUserEmail = new HttpCookie("UserEmail", User.Email.ToString());
                         Response.Cookies.Add(cookieUserEmail);
 
-                        cookieUserName.Expires = DateTime.Now.AddSeconds(10);
+                        //cookieUserName.Expires = DateTime.Now.AddSeconds(10);
+
+                        Session["UserId"] = User.UserId.ToString();
+                        Session["UserName"] = User.UserName.ToString();
+                        Session["UserEmail"] = User.Email.ToString();
 
 
 
@@ -100,6 +104,7 @@ namespace AuthenticationAndAuthorization.Controllers
 
         public ActionResult Logout()
         {
+            Session.Abandon();
             FormsAuthentication.SignOut();
             return RedirectToAction("Login");
         }

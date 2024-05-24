@@ -20,3 +20,8 @@
 {
     <h1>@Request.Cookies["UserEmail"].Value.ToString()</h1>
 }
+
+@if (Session["UserEmail"] != null)
+{
+    <h1>@Session["UserEmail"].ToString()</h1>
+}
