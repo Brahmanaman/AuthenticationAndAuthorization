@@ -6,6 +6,8 @@ using System.Web.Mvc;
 
 namespace AuthenticationAndAuthorization.Controllers
 {
+    [Authorize]
+    [OutputCache(NoStore = true, Duration = 0)]
     public class HomeController : Controller
     {
         public ActionResult Index()

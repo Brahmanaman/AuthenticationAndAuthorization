@@ -9,26 +9,26 @@ using System.Web.Security;
 
 namespace AuthenticationAndAuthorization.Controllers
 {
-    [Authorize]
+
     public class UserController : Controller
     {
         ConnectionContext connectionContext = new ConnectionContext();
 
-        [AllowAnonymous]
+
         // GET: User
         public ActionResult Index()
         {
             return View();
         }
 
-        [AllowAnonymous]
+
         [HttpGet]
         public ActionResult Signup()
         {
             return View();
         }
 
-        [AllowAnonymous]
+
         [HttpPost]
         public ActionResult Signup(SignUp user)
         {
@@ -54,16 +54,18 @@ namespace AuthenticationAndAuthorization.Controllers
 
         }
 
-        [AllowAnonymous]
+
         [HttpGet]
-        public ActionResult Login()
+        public ActionResult Login(string returnUrl)
         {
+            TempData["returnUrl"] = returnUrl;
             return View();
         }
 
-        [AllowAnonymous]
+
         [HttpPost]
-        public ActionResult Login(Login login)
+        [ValidateAntiForgeryToken]
+        public ActionResult Login(Login login, string returnURL)
         {
             try
             {
@@ -72,18 +74,18 @@ namespace AuthenticationAndAuthorization.Controllers
                     Login User = connectionContext.LoginUser().Where(x => x.Email == login.Email && x.Password == login.Password).FirstOrDefault();
                     if (User != null)
                     {
-                        HttpCookie cookieUserId = new HttpCookie("UserId", User.UserId.ToString());
-                        Response.Cookies.Add(cookieUserId);
+                        //HttpCookie cookieUserId = new HttpCookie("UserId", User.UserId.ToString());
+                        //Response.Cookies.Add(cookieUserId);
 
 
-                        HttpCookie cookieUserName = new HttpCookie("UserName", User.UserName.ToString());
-                        Response.Cookies.Add(cookieUserName);
+                        //HttpCookie cookieUserName = new HttpCookie("UserName", User.UserName.ToString());
+                        //Response.Cookies.Add(cookieUserName);
 
 
-                        HttpCookie cookieUserEmail = new HttpCookie("UserEmail", User.Email.ToString());
-                        Response.Cookies.Add(cookieUserEmail);
+                        //HttpCookie cookieUserEmail = new HttpCookie("UserEmail", User.Email.ToString());
+                        //Response.Cookies.Add(cookieUserEmail);
 
-                        //cookieUserName.Expires = DateTime.Now.AddSeconds(10);
+                        ////cookieUserName.Expires = DateTime.Now.AddSeconds(10);
 
                         Session["UserId"] = User.UserId.ToString();
                         Session["UserName"] = User.UserName.ToString();
@@ -91,13 +93,14 @@ namespace AuthenticationAndAuthorization.Controllers
 
 
 
-                        ModelState.Clear();
+                        //ModelState.Clear();
+                        FormsAuthentication.SetAuthCookie(User.UserName, false);
                         TempData["Message"] = "User LoggedIN Successfully";
-                        return RedirectToAction("Index");
+                        return RedirectToLocal(returnURL);
                     }
                     else
                     {
-                        TempData["Message"] = "Invalid Userid or Password";
+                        ModelState.AddModelError("", "Invalid username or password.");
                     }
                 }
             }
@@ -106,6 +109,18 @@ namespace AuthenticationAndAuthorization.Controllers
                 Console.WriteLine(ex.Message);
             }
             return View();
+        }
+
+        private ActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [AllowAnonymous]
