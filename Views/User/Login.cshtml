@@ -13,7 +13,7 @@
 
 
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Login", "User", new { ReturnUrl = TempData["returnUrl"] }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()
 
